@@ -87,7 +87,7 @@
     {
       "id": 4,
       "title": "What changes would you like?",
-      "type": "single",
+      "type": "multiple",
       "code": "changes",
       "items": [
         {
