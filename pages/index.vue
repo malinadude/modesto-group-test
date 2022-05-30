@@ -1,5 +1,6 @@
 <template>
   <PopupQuestionForm
+    v-if="questions.length"
     :questions="questions"
   />
 </template>
@@ -19,9 +20,9 @@ export default {
       questions: [],
     };
   },
-  mounted() {
+  async mounted() {
     if (!localStorage.getItem('questionFormCompleted')) {
-      this.getQuestions();
+      await this.getQuestions();
       this.$modal.show('popup-question-form');
     }
   },

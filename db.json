@@ -73,7 +73,7 @@
         {
           "type": "textarea",
           "next_question_id": null,
-          "title": null,
+          "title": "Your answer",
           "code": "exactly_user_answer"
         },
         {

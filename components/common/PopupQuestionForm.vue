@@ -13,7 +13,6 @@
           }"
           :style="{ zIndex: generateZIndexQuestionStep(stepIndex) }"
           class="popup-question-form__steps-item"
-          @click="changeQuestion($event, stepIndex)"
         ></div>
       </div>
 
@@ -31,7 +30,10 @@
             {{ `${question.title} (${questionIndex + 1}/${questionsLength})` }}
           </div>
 
-          <div class="popup-question-form__content-question-list">
+          <div
+            v-if="formData.length"
+            class="popup-question-form__content-question-list"
+          >
             <div
               v-for="item in question.items"
               :key="item.code"
@@ -42,7 +44,14 @@
                 :class="`popup-question-form__content-question-list-item-field--${item.type}`"
                 class="popup-question-form__content-question-list-item-field"
               >
-                <input :id="item.code" :type="item.type" :name="item.code" />
+                <input
+                  :id="item.code"
+                  v-model="formData[currentQuestionIndex - 1].value"
+                  :type="item.type"
+                  :name="item.code"
+                  :value="item.code"
+                  :disabled="validateQuestionField(item.code)"
+                />
                 <label :for="item.code">
                   {{ item.title }}
                 </label>
@@ -56,7 +65,12 @@
                 <label :for="item.code">
                   {{ item.title }}
                 </label>
-                <textarea :id="item.code" :name="item.code"></textarea>
+                <textarea
+                  :id="item.code"
+                  v-model="formData[currentQuestionIndex - 1].value"
+                  :name="item.code"
+                  :disabled="validateQuestionField(item.code)"
+                ></textarea>
               </div>
             </div>
           </div>
@@ -66,7 +80,8 @@
       <button
         :type="navigateButton.type"
         class="button"
-        @click="changeQuestion($event, currentQuestionIndex + 1)"
+        :disabled="navigateButton.disabled"
+        @click="changeQuestion"
       >
         {{ navigateButton.text }}
       </button>
@@ -90,7 +105,7 @@ export default {
     return {
       currentQuestion: null,
       currentQuestionIndex: 1,
-      formData: null,
+      formData: [],
     }
   },
   computed: {
@@ -102,37 +117,66 @@ export default {
         return {
           type: 'button',
           text: 'Next',
+          disabled: !this.validateQuestion,
         }
       }
 
       return {
         type: 'submit',
         text: 'Done',
+        disabled: !this.validateQuestion,
+      }
+    },
+    validateQuestion() {
+      const questionValue =
+        this.formData[this.currentQuestionIndex - 1]?.value.length
+
+      if (questionValue === 0) {
+        return false
+      }
+
+      if (this.currentQuestion?.type === 'single') {
+        if (questionValue > 1) {
+          return false
+        }
+      }
+
+      return true
+    },
+    validateQuestionField() {
+      return (field) => {
+        if (this.formData[this.currentQuestionIndex - 1].value.find((value) => value === field)) {
+          return false;
+        }
+
+        return this.currentQuestion.type === 'single' && this.formData[this.currentQuestionIndex - 1].value.length >= 1;
       }
     },
   },
-  watch: {
-    questions(questions) {
-
-
-      this.formData = questions.map((question) => {
-        return {
-          id: question.id,
-          code: question.code,
-          value: question.type === 'single' ? null : [],
-        };
-      })
-    }
+  mounted() {
+    window.s = this;
+    this.currentQuestion = this.questions[0]
+    this.formData = this.questions.map((question) => {
+      return {
+        id: question.id,
+        code: question.code,
+        value: [],
+      }
+    })
   },
   methods: {
-    changeQuestion(e, questionIndex = this.currentQuestionIndex + 1) {
+    changeQuestion(e) {
       e.preventDefault()
 
-      if (questionIndex > this.currentQuestionIndex) {
-        return false;
+      if (!this.validateQuestion) {
+        return false
       }
 
-      this.currentQuestionIndex = questionIndex
+      const questionIndex = this.currentQuestionIndex + 1
+      if (questionIndex !== this.currentQuestionIndex) {
+        this.currentQuestionIndex = questionIndex
+      }
+
       this.currentQuestion = this.questions[questionIndex - 1]
     },
     checkCurrentQuestionStepIndex(stepIndex) {
@@ -184,7 +228,6 @@ export default {
         border-radius: 100%;
         position: relative;
         z-index: 2;
-        cursor: pointer;
       }
       &--active {
         &:before {
