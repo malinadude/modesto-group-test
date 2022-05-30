@@ -2,6 +2,7 @@
   <PopupQuestionForm
     v-if="questions.length"
     :questions="questions"
+    :questions-api-service="questionsApiService"
   />
 </template>
 

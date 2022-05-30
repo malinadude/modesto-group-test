@@ -2,7 +2,6 @@
 <template>
   <modal
     :id="id"
-    :width="width"
     :adaptive="true"
     :scrollable="true"
     :name="id"
@@ -33,10 +32,38 @@ export default {
       type: String,
       required: true,
     },
-    width: {
-      type: Number,
-      default: 930,
-    },
   },
 };
 </script>
+
+<style lang="scss">
+  .modal-close {
+    .icon-cross {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      position: absolute;
+      right: 15px;
+      top: 10px;
+      cursor: pointer;
+
+      &:after, &:before {
+        content: "";
+        position: absolute;
+        height: 2px;
+        background-color: #000;
+        width: 14px;
+      }
+
+      &:before {
+        transform: rotate(-45deg);
+      }
+      &:after {
+        transform: rotate(45deg);
+      }
+    }
+  }
+</style>

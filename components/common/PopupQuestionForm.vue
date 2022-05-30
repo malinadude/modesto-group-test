@@ -1,6 +1,6 @@
 <template>
   <PopupWrapper id="popup-question-form" class="popup-question-form">
-    <form onsubmit="submit">
+    <form>
       <h2 class="title">Please answer a few questions</h2>
 
       <div class="popup-question-form__steps">
@@ -41,8 +41,11 @@
             >
               <div
                 v-if="item.type === 'checkbox'"
-                :class="`popup-question-form__content-question-list-item-field--${item.type}`"
-                class="popup-question-form__content-question-list-item-field"
+                :class="[
+                  `checkbox--${question.type}`,
+                  `popup-question-form__content-question-list-item-field--${item.type}`,
+                ]"
+                class="checkbox popup-question-form__content-question-list-item-field"
               >
                 <input
                   :id="item.code"
@@ -53,6 +56,7 @@
                   :disabled="validateQuestionField(item.code)"
                 />
                 <label :for="item.code">
+                  <span class="checkbox-icon"></span>
                   {{ item.title }}
                 </label>
               </div>
@@ -80,6 +84,7 @@
       <button
         :type="navigateButton.type"
         class="button"
+        :class="{ 'button-disabled': navigateButton.disabled }"
         :disabled="navigateButton.disabled"
         @click="changeQuestion"
       >
@@ -98,6 +103,10 @@ export default {
   props: {
     questions: {
       type: Array,
+      required: true,
+    },
+    questionsApiService: {
+      type: Object,
       required: true,
     },
   },
@@ -199,12 +208,38 @@ export default {
         return false
       }
 
-      const questionIndex = this.currentQuestionIndex + 1
-      if (questionIndex !== this.currentQuestionIndex) {
-        this.currentQuestionIndex = questionIndex
+      if (this.currentQuestionIndex === this.questionsLength) {
+        return this.submit()
       }
 
-      this.currentQuestion = this.questions[questionIndex - 1]
+      let questionIndex = this.currentQuestionIndex
+
+      if (this.currentQuestion.type === 'single') {
+        let nextQuestionId = this.currentQuestion.items.find(
+          (element) =>
+            element.code ===
+            this.formData[this.currentQuestionIndex - 1].value[0]
+        )
+        nextQuestionId =
+          nextQuestionId !== -1
+            ? nextQuestionId.next_question_id !== null
+              ? String(nextQuestionId.next_question_id)
+              : false
+            : false
+
+        if (nextQuestionId) {
+          questionIndex = this.questions.findIndex(
+            (element) => element.id === Number(nextQuestionId)
+          )
+          this.currentQuestionIndex = questionIndex + 1
+          this.currentQuestion = this.questions[questionIndex]
+
+          return true
+        }
+      }
+
+      this.currentQuestionIndex = questionIndex + 1
+      this.currentQuestion = this.questions[this.currentQuestionIndex - 1]
     },
     checkCurrentQuestionStepIndex(stepIndex) {
       return stepIndex <= this.currentQuestionIndex
@@ -215,8 +250,13 @@ export default {
     checkCurrentQuestionIndex(questionIndex) {
       return questionIndex + 1 === this.currentQuestionIndex
     },
-    submit(e) {
-      e.preventDefault()
+    async submit() {
+      await this.questionsApiService.sendQuestions(this.formData)
+
+      if (!localStorage.getItem('questionFormCompleted')) {
+        localStorage.setItem('questionFormCompleted', '1')
+        this.$modal.hide('popup-question-form')
+      }
     },
   },
 }
@@ -224,6 +264,14 @@ export default {
 
 <style lang="scss">
 .popup-question-form {
+  .modal__content {
+    padding: 30px 40px;
+
+    .title {
+      margin-bottom: 51px;
+      text-align: center;
+    }
+  }
   &__steps {
     display: flex;
     justify-content: space-between;
@@ -267,19 +315,50 @@ export default {
       }
     }
   }
-  &__content-question {
-    display: none;
+  &__content {
+    margin-bottom: 30px;
 
-    &--active {
-      display: flex;
-      flex-direction: column;
-    }
-    &-list {
-      &-item {
-        &-field {
-          &--textarea {
-            textarea {
-              resize: none;
+    &-question {
+      display: none;
+
+      &--active {
+        display: flex;
+        flex-direction: column;
+      }
+      &-head {
+        margin-bottom: 30px;
+        font-weight: 500;
+        font-size: 15px;
+        line-height: 30px;
+      }
+      &-list {
+        &-item {
+          font-weight: 400;
+          font-size: 12px;
+          line-height: 18px;
+
+          &:not(:last-child) {
+            margin-bottom: 12px;
+          }
+          &-field {
+            &--checkbox {
+              display: flex;
+              align-items: center;
+
+              label {
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+              }
+            }
+            &--textarea {
+              display: flex;
+              flex-direction: column;
+              align-items: flex-start;
+
+              label {
+                margin-bottom: 12px;
+              }
             }
           }
         }
