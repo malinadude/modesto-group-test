@@ -2,58 +2,137 @@
   "questions": [
     {
       "id": 1,
-      "title": "How often do you visit our site? 1",
+      "title": "How often do you visit our site?",
       "type": "single",
+      "code": "visit",
       "items": [
         {
           "type": "checkbox",
           "next_question_id": null,
           "title": "A couple of times a month",
-          "code": "month"
+          "code": "visit_month"
         },
         {
-          "type": "textarea",
-          "next_question_id": 3,
-          "title": "A couple of times a month",
-          "code": "month"
+          "type": "checkbox",
+          "next_question_id": null,
+          "title": "Once a week",
+          "code": "visit_once_week"
+        },
+        {
+          "type": "checkbox",
+          "next_question_id": null,
+          "title": "Few times a week",
+          "code": "visit_times_week"
+        },
+        {
+          "type": "checkbox",
+          "next_question_id": null,
+          "title": "Every day",
+          "code": "visit_every_day"
+        },
+        {
+          "type": "checkbox",
+          "next_question_id": null,
+          "title": "Several times a day",
+          "code": "visit_several_day"
         }
       ]
     },
     {
       "id": 2,
-      "title": "How often do you visit our site? 2",
+      "title": "Are you comfortable using our site?",
       "type": "single",
+      "code": "comfortable",
       "items": [
         {
           "type": "checkbox",
           "next_question_id": null,
-          "title": "A couple of times a month",
-          "code": "month"
+          "title": "Comfortable",
+          "code": "comfortable_comfortable"
         },
         {
-          "type": "textarea",
+          "type": "checkbox",
           "next_question_id": null,
-          "title": "A couple of times a month",
-          "code": "month"
+          "title": "Not very comfortable",
+          "code": "comfortable_not_very_comfortable"
+        },
+        {
+          "type": "checkbox",
+          "next_question_id": null,
+          "title": "Very uncomfortable",
+          "code": "comfortable_very_uncomfortable"
         }
       ]
     },
     {
       "id": 3,
-      "title": "How often do you visit our site? 3",
+      "title": "Tell us what exactly you do not like?",
       "type": "single",
+      "code": "exactly",
+      "items": [
+        {
+          "type": "textarea",
+          "next_question_id": null,
+          "title": null,
+          "code": "exactly_user_answer"
+        },
+        {
+          "type": "checkbox",
+          "next_question_id": null,
+          "title": "I do not want to answer",
+          "code": "exactly_no_answer"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "What changes would you like?",
+      "type": "single",
+      "code": "changes",
       "items": [
         {
           "type": "checkbox",
           "next_question_id": null,
-          "title": "A couple of times a month",
-          "code": "month"
+          "title": "Design change",
+          "code": "changes_design_change"
+        },
+        {
+          "type": "checkbox",
+          "next_question_id": null,
+          "title": "Newsletter",
+          "code": "changes_newsletter"
+        },
+        {
+          "type": "checkbox",
+          "next_question_id": null,
+          "title": "Online consultations",
+          "code": "changes_online_consultations"
         },
         {
           "type": "textarea",
           "next_question_id": null,
-          "title": "A couple of times a month",
-          "code": "month"
+          "title": "Your answer",
+          "code": "changes_user_answer"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Tell us what you like most about our site?",
+      "type": "single",
+      "code": "site",
+      "items": [
+        {
+          "type": "textarea",
+          "next_question_id": null,
+          "title": "Your answer",
+          "code": "site_user_answer"
+        },
+        {
+          "type": "checkbox",
+          "next_question_id": null,
+          "title": "I do not want to answer",
+          "code": "site_no_answer"
         }
       ]
     }

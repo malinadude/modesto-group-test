@@ -4,20 +4,34 @@
       <h2 class="title">Please answer a few questions</h2>
 
       <div class="popup-question-form__steps">
-
+        <div
+          v-for="stepIndex in questionsLength"
+          :key="stepIndex"
+          class="popup-question-form__steps-item"
+        ></div>
       </div>
 
       <div class="popup-question-form__content">
-        <div class="popup-question-form__content-head">
-          How often do you visit our site? (1/5)
-        </div>
+        <div
+          v-for="(question, questionIndex) in questions"
+          :key="question.id"
+          class="popup-question-form__content-question"
+        >
+          <div class="popup-question-form__content-question-head">
+            {{ `${question.title} (${questionIndex + 1}/${questionsLength})` }}
+          </div>
 
-        <div class="popup-question-form__content-questions">
-
+          <div
+            v-for="item in question.items"
+            :key="item.code"
+            class="popup-question-form__content-question-items"
+          ></div>
         </div>
       </div>
 
-      <button type="button" class="button">Next</button>
+      <button :type="navigateButton.type" class="button">
+        {{ navigateButton.text }}
+      </button>
     </form>
   </PopupWrapper>
 </template>
@@ -36,12 +50,28 @@ export default {
   },
   data() {
     return {
+      currentQuestionIndex: 1,
+    }
+  },
+  computed: {
+    questionsLength() {
+      return this.questions.length
+    },
+    navigateButton() {
+      if (!this.currentQuestionIndex === this.questionsLength) {
+        return {
+          type: 'button',
+          text: 'Next',
+        }
+      }
 
-    };
+      return {
+        type: 'submit',
+        text: 'Done',
+      }
+    },
   },
 }
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>
