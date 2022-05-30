@@ -145,16 +145,23 @@ export default {
     },
     validateQuestionField() {
       return (field) => {
-        if (this.formData[this.currentQuestionIndex - 1].value.find((value) => value === field)) {
-          return false;
+        if (
+          this.formData[this.currentQuestionIndex - 1].value.find(
+            (value) => value === field
+          )
+        ) {
+          return false
         }
 
-        return this.currentQuestion.type === 'single' && this.formData[this.currentQuestionIndex - 1].value.length >= 1;
+        return (
+          this.currentQuestion.type === 'single' &&
+          this.formData[this.currentQuestionIndex - 1].value.length >= 1
+        )
       }
     },
   },
   mounted() {
-    window.s = this;
+    window.s = this
     this.currentQuestion = this.questions[0]
     this.formData = this.questions.map((question) => {
       return {
