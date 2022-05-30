@@ -46,19 +46,19 @@
       "items": [
         {
           "type": "checkbox",
-          "next_question_id": null,
+          "next_question_id": 4,
           "title": "Comfortable",
           "code": "comfortable_comfortable"
         },
         {
           "type": "checkbox",
-          "next_question_id": null,
+          "next_question_id": 3,
           "title": "Not very comfortable",
           "code": "comfortable_not_very_comfortable"
         },
         {
           "type": "checkbox",
-          "next_question_id": null,
+          "next_question_id": 3,
           "title": "Very uncomfortable",
           "code": "comfortable_very_uncomfortable"
         }
