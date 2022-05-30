@@ -46,7 +46,7 @@
               >
                 <input
                   :id="item.code"
-                  v-model="formData[currentQuestionIndex - 1].value"
+                  v-model="formData[questionIndex].value"
                   :type="item.type"
                   :name="item.code"
                   :value="item.code"
@@ -67,9 +67,9 @@
                 </label>
                 <textarea
                   :id="item.code"
-                  v-model="formData[currentQuestionIndex - 1].value"
                   :name="item.code"
                   :disabled="validateQuestionField(item.code)"
+                  @change="textFieldRecord($event, questionIndex)"
                 ></textarea>
               </div>
             </div>
@@ -144,10 +144,10 @@ export default {
       return true
     },
     validateQuestionField() {
-      return (field) => {
+      return (code) => {
         if (
-          this.formData[this.currentQuestionIndex - 1].value.find(
-            (value) => value === field
+          this.formData[this.currentQuestionIndex - 1]?.value.find(
+            (value) => value === code || value.code === code
           )
         ) {
           return false
@@ -155,23 +155,43 @@ export default {
 
         return (
           this.currentQuestion.type === 'single' &&
-          this.formData[this.currentQuestionIndex - 1].value.length >= 1
+          this.formData[this.currentQuestionIndex - 1]?.value.length >= 1
         )
       }
     },
   },
   mounted() {
-    window.s = this
     this.currentQuestion = this.questions[0]
-    this.formData = this.questions.map((question) => {
-      return {
-        id: question.id,
-        code: question.code,
-        value: [],
-      }
-    })
+    this.generateFormData()
   },
   methods: {
+    textFieldRecord(e, questionIndex) {
+      const index = this.formData[questionIndex].value.findIndex(
+        (element) => element.code === e.target.name
+      )
+
+      if (index !== -1) {
+        if (e.target.value.trim()) {
+          this.formData[questionIndex].value[index] = e.target.value.trim()
+        } else {
+          this.formData[questionIndex].value.splice(index, 1)
+        }
+      } else {
+        this.formData[questionIndex].value.push({
+          code: e.target.name,
+          value: e.target.value.trim(),
+        })
+      }
+    },
+    generateFormData() {
+      this.formData = this.questions.map((question) => {
+        return {
+          id: question.id,
+          code: question.code,
+          value: [],
+        }
+      })
+    },
     changeQuestion(e) {
       e.preventDefault()
 
@@ -253,6 +273,17 @@ export default {
     &--active {
       display: flex;
       flex-direction: column;
+    }
+    &-list {
+      &-item {
+        &-field {
+          &--textarea {
+            textarea {
+              resize: none;
+            }
+          }
+        }
+      }
     }
   }
 }
